@@ -35,13 +35,17 @@ resource "aws_db_subnet_group" "rds_subnet" {
 }
 
 resource "aws_db_instance" "replica" {
-  count               = length(module.vpc.azs)
+  count      = length(module.vpc.azs)
+  depends_on = [aws_db_instance.primary, aws_db_subnet_group.rds_subnet]
+
   identifier          = "${aws_db_instance.primary.identifier}-replica-${module.vpc.azs[count.index]}"
   replicate_source_db = aws_db_instance.primary.identifier
   instance_class      = aws_db_instance.primary.instance_class
 
   vpc_security_group_ids = [module.vpc.default_security_group_id]
   availability_zone      = module.vpc.azs[count.index]
+
+  skip_final_snapshot = true
 
   tags = local.common_tags
 }
