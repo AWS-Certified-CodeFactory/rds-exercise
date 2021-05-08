@@ -1,7 +1,7 @@
 locals {
   common_tags = {
-    org = var.org
-    env = var.env
+    org     = var.org
+    env     = var.env
     project = "rds-exercise"
   }
 }
@@ -22,4 +22,16 @@ variable "aws_region" {
   description = "AWS Resources created region"
   type        = string
   default     = "us-east-1"
+}
+
+variable "rds_dbname" {
+  default = "app_contents"
+}
+
+variable "rds_username" {
+  default = "app_user"
+}
+
+variable "rds_password" {
+  default = "test.123456"
 }
