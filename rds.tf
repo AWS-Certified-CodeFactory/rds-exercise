@@ -1,4 +1,4 @@
-resource "aws_db_instance" "main" {
+resource "aws_db_instance" "primary" {
   identifier = "${var.org}-${var.env}-rds"
 
   engine              = "postgres"
@@ -34,11 +34,11 @@ resource "aws_db_subnet_group" "rds_subnet" {
   tags = local.common_tags
 }
 
-resource "aws_db_instance" "read_replica" {
+resource "aws_db_instance" "replica" {
   count               = length(module.vpc.azs)
-  identifier          = "${aws_db_instance.main.identifier}-replica-${module.vpc.azs[count.index]}"
-  replicate_source_db = aws_db_instance.main.identifier
-  instance_class      = aws_db_instance.main.instance_class
+  identifier          = "${aws_db_instance.primary.identifier}-replica-${module.vpc.azs[count.index]}"
+  replicate_source_db = aws_db_instance.primary.identifier
+  instance_class      = aws_db_instance.primary.instance_class
 
   vpc_security_group_ids = [module.vpc.default_security_group_id]
   availability_zone      = module.vpc.azs[count.index]
